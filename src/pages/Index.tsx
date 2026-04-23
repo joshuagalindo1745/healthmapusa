@@ -5,9 +5,8 @@ import { Results } from "@/components/Results";
 import { ResultsSkeleton } from "@/components/ResultsSkeleton";
 import { HowItWorks } from "@/components/HowItWorks";
 import { Footer } from "@/components/Footer";
+import { supabase } from "@/integrations/supabase/client";
 import type { AppState, PredictResponse } from "@/types";
-
-const API_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
 
 const Index = () => {
   const [appState, setAppState] = useState<AppState>("idle");
@@ -18,38 +17,40 @@ const Index = () => {
     setAppState("loading");
     setError(null);
 
-    if (!API_URL) {
-      setError("API URL not configured. Set VITE_API_URL to your deployed health-risk API.");
-      setAppState("error");
-      return;
-    }
-
     try {
-      const res = await fetch(`${API_URL}/predict`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ address }),
-      });
+      const { data: json, error: fnError } = await supabase.functions.invoke<PredictResponse>(
+        "predict",
+        { body: { address } },
+      );
 
-      if (!res.ok) {
-        let detail = `Request failed (${res.status})`;
-        try {
-          const j = await res.json();
-          if (j?.detail) detail = j.detail;
-        } catch { /* noop */ }
+      if (fnError) {
+        // FunctionsHttpError exposes the response on .context
+        let detail = fnError.message;
+        const ctx = (fnError as unknown as { context?: Response }).context;
+        if (ctx && typeof ctx.json === "function") {
+          try {
+            const j = await ctx.json();
+            if (j?.detail) detail = j.detail;
+          } catch { /* noop */ }
+        }
         setError(detail);
         setAppState("error");
         return;
       }
 
-      const json: PredictResponse = await res.json();
+      if (!json) {
+        setError("Empty response from server.");
+        setAppState("error");
+        return;
+      }
+
       setData(json);
       setAppState("success");
       requestAnimationFrame(() => {
         document.getElementById("results")?.scrollIntoView({ behavior: "smooth", block: "start" });
       });
     } catch {
-      setError("Network error. Make sure the API is running.");
+      setError("Network error. Please try again.");
       setAppState("error");
     }
   }, []);
