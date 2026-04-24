@@ -170,7 +170,7 @@ async function aiAnalysis(
 
   const summary = Object.entries(predictions)
     .map(([k, v]) =>
-      `- ${k}: ${v.actual ?? "N/A"}% (threshold ${v.threshold}%) — ${v.risk_level}`
+      `- ${k}: ${v.actual ?? "N/A"}% (benchmark ${v.threshold}%) — ${v.risk_level === "HIGH" ? "above" : "below"}`
     )
     .join("\n");
 
@@ -179,22 +179,23 @@ async function aiAnalysis(
     .join("\n");
 
   const prompt =
-    `You are a public health analyst writing for residents of ${county} County, ${state}. The numbers below come from the County Health Rankings & Roadmaps dataset.
+    `Community-level health snapshot for ${county} County, ${state} (County Health Rankings).
 
-Health indicators:
+Indicators:
 ${summary}
 
-County environment:
+Environment:
 ${envSummary}
 
-High-risk conditions: ${high.length ? high.join(", ") : "none"}.
+Above benchmark: ${high.length ? high.join(", ") : "none"}.
 
-Write a 3–4 paragraph plain-text analysis (no markdown, no headings, no bullet lists). Cover:
-1) What these numbers mean for residents in plain language.
-2) Which environmental/economic factors most likely drive the high-risk conditions.
-3) 3–5 concrete, locally relevant recommendations residents and local leaders can act on.
+Write a TIGHT 2-paragraph analysis (max ~180 words total), plain text, no markdown.
 
-Keep it warm, specific to this county's data, and avoid medical advice disclaimers.`;
+Paragraph 1: Cite the specific numbers above to describe what stands out for this county. Use associational language ("is associated with", "tends to co-occur with") — never causal ("causes", "leads to"). These are county averages, not individual risks.
+
+Paragraph 2: Give 2–3 concrete, locally relevant actions residents or local leaders can take, each tied to a specific number above.
+
+No disclaimers, no preamble, no headings.`;
 
   const res = await fetch(GROQ_URL, {
     method: "POST",
@@ -208,12 +209,12 @@ Keep it warm, specific to this county's data, and avoid medical advice disclaime
         {
           role: "system",
           content:
-            "You are a careful, plain-spoken public health analyst.",
+            "You are a careful, plain-spoken public health analyst. You only speak in associational terms about correlational data and never imply causation.",
         },
         { role: "user", content: prompt },
       ],
-      temperature: 0.6,
-      max_tokens: 900,
+      temperature: 0.5,
+      max_tokens: 350,
     }),
   });
 
