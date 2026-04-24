@@ -83,9 +83,17 @@ export const RiskCard = ({ name, result, delayMs = 0 }: Props) => {
           </div>
         )}
 
-        <p className="text-[11px] text-muted-foreground/80 border-t border-border pt-2">
-          Model R² ≥ 0.88
-        </p>
+        <div className="text-[11px] text-muted-foreground/80 border-t border-border pt-2 flex items-center justify-between gap-2 tabular-nums">
+          <span>
+            R² <span className="text-foreground font-medium">{result.r2.toFixed(3)}</span>
+          </span>
+          <span>
+            p <span className="text-foreground font-medium">
+              {result.p_value < 0.001 ? "< 0.001" : result.p_value.toFixed(3)}
+            </span>
+          </span>
+          <span>n = {result.n.toLocaleString()}</span>
+        </div>
       </div>
     </article>
   );

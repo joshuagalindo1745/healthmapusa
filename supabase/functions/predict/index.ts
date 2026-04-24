@@ -127,6 +127,7 @@ function buildPredictionsFromRow(row: CountyRow) {
   for (const [name, threshold] of Object.entries(THRESHOLDS)) {
     const field = FIELD_FOR_CONDITION[name];
     const actual = (row[field] as number | null) ?? null;
+    const stats = MODEL_STATS[name];
     if (actual === null) {
       predictions[name] = {
         predicted: 0,
@@ -134,6 +135,9 @@ function buildPredictionsFromRow(row: CountyRow) {
         diff: null,
         risk_level: "LOW",
         threshold,
+        r2: stats.r2,
+        p_value: stats.p_value,
+        n: stats.n,
       };
       continue;
     }
@@ -146,6 +150,9 @@ function buildPredictionsFromRow(row: CountyRow) {
       diff: 0,
       risk_level: risk,
       threshold,
+      r2: stats.r2,
+      p_value: stats.p_value,
+      n: stats.n,
     };
   }
   return { env, predictions, high };
