@@ -3,13 +3,13 @@ import { Database, Cpu, Brain } from "lucide-react";
 const ITEMS = [
   {
     icon: Database,
-    title: "3,195 Counties",
-    desc: "Training data from every US county with food, economic, and demographic features",
+    title: "3,159 US Counties",
+    desc: "Real data from County Health Rankings — food, economic, and health features for every county",
   },
   {
     icon: Cpu,
-    title: "XGBoost ML Models",
-    desc: "5 separate gradient-boosted models, each cross-validated with R² scores of 0.78–0.96",
+    title: "Multivariate Regression",
+    desc: "One OLS model per condition, fit on all counties. R² ranges from 0.53 (Obesity) to 0.81 (Physical Inactivity), all p < 0.001",
   },
   {
     icon: Brain,
