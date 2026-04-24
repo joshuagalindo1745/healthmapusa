@@ -4,6 +4,9 @@ export interface ConditionResult {
   diff: number | null;
   risk_level: "HIGH" | "LOW";
   threshold: number;
+  r2: number;
+  p_value: number;
+  n: number;
 }
 
 export interface Environment {
