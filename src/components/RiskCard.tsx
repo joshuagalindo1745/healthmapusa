@@ -8,8 +8,6 @@ interface Props {
 }
 
 const fmtPct = (v: number | null) => (v == null ? "N/A" : `${v.toFixed(1)}%`);
-const fmtDiff = (v: number | null) =>
-  v == null ? "N/A" : `${v > 0 ? "+" : ""}${v.toFixed(1)}%`;
 
 export const RiskCard = ({ name, result, delayMs = 0 }: Props) => {
   const isHigh = result.risk_level === "HIGH";
@@ -36,13 +34,13 @@ export const RiskCard = ({ name, result, delayMs = 0 }: Props) => {
           <h3 className="font-semibold text-base">{name}</h3>
           <span
             className={cn(
-              "text-[11px] font-bold px-2 py-1 rounded-md tracking-wide",
+              "text-[10px] font-bold px-2 py-1 rounded-md tracking-wide whitespace-nowrap",
               isHigh
                 ? "bg-destructive-soft text-destructive-deep"
                 : "bg-primary-soft text-primary-deep",
             )}
           >
-            {isHigh ? "HIGH RISK" : "LOW RISK"}
+            {isHigh ? "ABOVE BENCHMARK" : "BELOW BENCHMARK"}
           </span>
         </div>
 
@@ -72,14 +70,13 @@ export const RiskCard = ({ name, result, delayMs = 0 }: Props) => {
             aria-hidden
           />
         </div>
-        <p className="text-[11px] text-muted-foreground mb-4">
-          threshold: {result.threshold.toFixed(1)}%
+        <p className="text-[11px] text-muted-foreground mb-3">
+          benchmark: {result.threshold.toFixed(1)}%
         </p>
 
         {result.actual != null && (
-          <div className="flex items-center justify-between text-[13px] text-muted-foreground mb-3">
-            <span>Actual: <span className="text-foreground font-medium">{fmtPct(result.actual)}</span></span>
-            <span>Diff: <span className="text-foreground font-medium">{fmtDiff(result.diff)}</span></span>
+          <div className="text-[13px] text-muted-foreground mb-3">
+            County value: <span className="text-foreground font-medium">{fmtPct(result.actual)}</span>
           </div>
         )}
 

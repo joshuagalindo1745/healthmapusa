@@ -18,7 +18,7 @@ export const Results = ({ data }: Props) => {
             {data.county} County, {data.state}
           </h2>
           <p className="text-muted-foreground mt-1">
-            Based on county-level data from federal health databases
+            Community-level indicators from County Health Rankings — not individual medical advice.
           </p>
         </div>
         <div className={
@@ -27,8 +27,8 @@ export const Results = ({ data }: Props) => {
             : "text-sm font-semibold text-primary-deep bg-primary-soft px-3 py-2 rounded-md"
         }>
           {highCount > 0
-            ? `${highCount} ${highCount === 1 ? "condition" : "conditions"} flagged HIGH RISK`
-            : "All conditions low risk"}
+            ? `${highCount} ${highCount === 1 ? "indicator" : "indicators"} above benchmark`
+            : "All indicators below benchmark"}
         </div>
       </div>
 
@@ -45,7 +45,7 @@ export const Results = ({ data }: Props) => {
           <AlertTriangle className="h-5 w-5 text-destructive-deep mt-0.5 shrink-0" />
           <p className="text-sm text-destructive-deep">
             <span className="font-semibold">{data.high_risk_conditions.join(" and ")}</span>{" "}
-            flagged as high risk in your county. See the AI analysis below for specific recommendations.
+            sit above the national benchmark in your county. These are correlations across communities, not personal predictions — see the analysis below for context.
           </p>
         </div>
       )}
