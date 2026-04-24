@@ -14,7 +14,78 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      county_health: {
+        Row: {
+          child_poverty_pct: number | null
+          county: string
+          created_at: string
+          diabetes_pct: number | null
+          fast_food_per_1k: number | null
+          fips: string
+          food_environment_index: number | null
+          food_insecurity_pct: number | null
+          grocery_per_1k: number | null
+          insufficient_sleep_pct: number | null
+          limited_healthy_food_pct: number | null
+          median_income: number | null
+          mental_distress_pct: number | null
+          obesity_pct: number | null
+          physical_inactivity_pct: number | null
+          population: number | null
+          rural_pct: number | null
+          smoking_pct: number | null
+          snap_participation_pct: number | null
+          state: string
+          uninsured_pct: number | null
+        }
+        Insert: {
+          child_poverty_pct?: number | null
+          county: string
+          created_at?: string
+          diabetes_pct?: number | null
+          fast_food_per_1k?: number | null
+          fips: string
+          food_environment_index?: number | null
+          food_insecurity_pct?: number | null
+          grocery_per_1k?: number | null
+          insufficient_sleep_pct?: number | null
+          limited_healthy_food_pct?: number | null
+          median_income?: number | null
+          mental_distress_pct?: number | null
+          obesity_pct?: number | null
+          physical_inactivity_pct?: number | null
+          population?: number | null
+          rural_pct?: number | null
+          smoking_pct?: number | null
+          snap_participation_pct?: number | null
+          state: string
+          uninsured_pct?: number | null
+        }
+        Update: {
+          child_poverty_pct?: number | null
+          county?: string
+          created_at?: string
+          diabetes_pct?: number | null
+          fast_food_per_1k?: number | null
+          fips?: string
+          food_environment_index?: number | null
+          food_insecurity_pct?: number | null
+          grocery_per_1k?: number | null
+          insufficient_sleep_pct?: number | null
+          limited_healthy_food_pct?: number | null
+          median_income?: number | null
+          mental_distress_pct?: number | null
+          obesity_pct?: number | null
+          physical_inactivity_pct?: number | null
+          population?: number | null
+          rural_pct?: number | null
+          smoking_pct?: number | null
+          snap_participation_pct?: number | null
+          state?: string
+          uninsured_pct?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
