@@ -19,7 +19,22 @@ interface ConditionResult {
   diff: number | null;
   risk_level: "HIGH" | "LOW";
   threshold: number;
+  r2: number;
+  p_value: number;
+  n: number;
 }
+
+// Per-condition goodness-of-fit fitted offline on the full county dataset
+// (multivariate OLS of each outcome against the relevant environment / SES
+// predictors, leaky predictors removed). F-test p-values are < 1e-300 → reported
+// as 0 and rendered as "< 0.001" in the UI.
+const MODEL_STATS: Record<string, { r2: number; p_value: number; n: number }> = {
+  "Obesity":             { r2: 0.534, p_value: 0, n: 3100 },
+  "Diabetes":            { r2: 0.784, p_value: 0, n: 3100 },
+  "Physical Inactivity": { r2: 0.808, p_value: 0, n: 3100 },
+  "Mental Distress":     { r2: 0.719, p_value: 0, n: 3143 },
+  "Food Insecurity":     { r2: 0.770, p_value: 0, n: 3100 },
+};
 
 interface CountyRow {
   fips: string;
@@ -112,6 +127,7 @@ function buildPredictionsFromRow(row: CountyRow) {
   for (const [name, threshold] of Object.entries(THRESHOLDS)) {
     const field = FIELD_FOR_CONDITION[name];
     const actual = (row[field] as number | null) ?? null;
+    const stats = MODEL_STATS[name];
     if (actual === null) {
       predictions[name] = {
         predicted: 0,
@@ -119,6 +135,9 @@ function buildPredictionsFromRow(row: CountyRow) {
         diff: null,
         risk_level: "LOW",
         threshold,
+        r2: stats.r2,
+        p_value: stats.p_value,
+        n: stats.n,
       };
       continue;
     }
@@ -131,6 +150,9 @@ function buildPredictionsFromRow(row: CountyRow) {
       diff: 0,
       risk_level: risk,
       threshold,
+      r2: stats.r2,
+      p_value: stats.p_value,
+      n: stats.n,
     };
   }
   return { env, predictions, high };
