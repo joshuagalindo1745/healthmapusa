@@ -1,2 +1,3 @@
 
 The website HealthMapUSA is an AI-powered health analytics platform that allows users to assess their risk for various diseases by entering personal health information. It uses machine learning models to analyze inputs such as medical metrics and lifestyle factors, then generates instant predictions for conditions like diabetes, heart disease, kidney disease, and liver disease. The goal of the site is to provide users with early insights into potential health risks and promote preventive care. While it offers quick and data-driven results, it is intended for informational purposes only and should not be used as a substitute for professional medical advice.
+Visit https://healthmapusa.lovable.app/ to try it out
