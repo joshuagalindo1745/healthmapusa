@@ -113,3 +113,30 @@
   }
   .animate-progress { animation: progress-grow 700ms cubic-bezier(0.4, 0, 0.2, 1) both; }
 }
+
+/* Leaflet overrides */
+.tract-label {
+  background: transparent !important;
+  border: none !important;
+  pointer-events: none;
+}
+.tract-label span {
+  font-size: 10px;
+  font-weight: 600;
+  color: hsl(var(--foreground) / 0.8);
+  text-shadow:
+    -1px -1px 0 hsl(var(--background)),
+     1px -1px 0 hsl(var(--background)),
+    -1px  1px 0 hsl(var(--background)),
+     1px  1px 0 hsl(var(--background));
+  white-space: nowrap;
+}
+.tract-tip {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 6px;
+  box-shadow: var(--shadow-card);
+  padding: 6px 8px;
+  color: hsl(var(--foreground));
+}
+.tract-tip::before { display: none; }
