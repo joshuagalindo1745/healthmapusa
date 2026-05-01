@@ -97,10 +97,14 @@ async function fetchTracts(state: string, counties: string[]) {
   const url =
     `https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/Tracts_Blocks/MapServer/0/query` +
     `?where=${encodeURIComponent(where)}` +
-    `&outFields=GEOID,NAME,NAMELSAD&returnGeometry=true&f=geojson&outSR=4326`;
+    `&outFields=GEOID,NAME&returnGeometry=true&f=geojson&outSR=4326`;
   const res = await fetch(url);
   if (!res.ok) throw new Error(`TIGERweb ${res.status}`);
-  return await res.json();
+  const json = await res.json();
+  if (json.error || !Array.isArray(json.features)) {
+    throw new Error(`TIGERweb error: ${JSON.stringify(json.error ?? json).slice(0, 200)}`);
+  }
+  return json;
 }
 
 async function fetchPlaces(stateAbbr: string, countyNames: string[], measureId: string) {
@@ -152,9 +156,11 @@ Deno.serve(async (req) => {
     let red = 0, green = 0, none = 0;
     for (const f of geo.features) {
       const geoid = f.properties?.GEOID;
+      const name = f.properties?.NAME;
       const v = geoid ? values[geoid] : undefined;
       f.properties = {
         ...f.properties,
+        NAMELSAD: name ? `Census Tract ${name}` : "Unknown tract",
         value: v ?? null,
         flag: v == null ? "none" : v > metric.benchmark ? "above" : "below",
       };
