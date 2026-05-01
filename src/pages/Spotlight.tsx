@@ -134,8 +134,8 @@ const Spotlight = () => {
         </section>
 
         <section className="max-w-3xl mx-auto px-4 md:px-8 pb-6">
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-0 sm:rounded-lg sm:shadow-card sm:border sm:border-border sm:bg-card sm:p-1.5">
-            <div ref={inputRef} className="relative flex-1">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-1.5 sm:rounded-lg sm:shadow-card sm:border sm:border-border sm:bg-card sm:p-1.5">
+            <div ref={inputRef} className="relative flex-1 min-w-0">
               <Input
                 value={query}
                 onChange={(e) => {
@@ -186,7 +186,7 @@ const Spotlight = () => {
             <select
               value={metric}
               onChange={(e) => onMetricChange(e.target.value)}
-              className="h-12 sm:border-0 bg-transparent px-3 text-sm font-medium focus:outline-none rounded-md border border-border"
+              className="h-12 sm:w-48 shrink-0 bg-transparent px-3 text-sm font-medium focus:outline-none rounded-md sm:border-0 border border-border"
               aria-label="Metric"
             >
               {METRICS.map((m) => (
