@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { MapContainer, TileLayer, GeoJSON, Tooltip, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, GeoJSON, useMap } from "react-leaflet";
 import L, { type GeoJSON as LGeoJSON, type LatLngBoundsExpression } from "leaflet";
 import { Plus, Minus, RotateCcw } from "lucide-react";
 
