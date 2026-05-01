@@ -134,7 +134,7 @@ const Spotlight = () => {
         </section>
 
         <section className="max-w-3xl mx-auto px-4 md:px-8 pb-6">
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-1.5 sm:rounded-lg sm:shadow-card sm:border sm:border-border sm:bg-card sm:p-1.5">
+          <div className="grid grid-cols-1 sm:grid-cols-[1fr_12rem_auto] gap-2 sm:gap-1.5 sm:rounded-lg sm:shadow-card sm:border sm:border-border sm:bg-card sm:p-1.5 sm:items-center">
             <div ref={inputRef} className="relative flex-1 min-w-0">
               <Input
                 value={query}
