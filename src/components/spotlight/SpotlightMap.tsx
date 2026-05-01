@@ -55,52 +55,32 @@ const TractLabels = ({
   features: GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon, FeatureProps>[];
 }) => {
   const map = useMap();
-  const [visible, setVisible] = useState(map.getZoom() >= 13);
   useEffect(() => {
-    const handler = () => setVisible(map.getZoom() >= 13);
-    map.on("zoomend", handler);
-    return () => {
-      map.off("zoomend", handler);
+    const layer = L.layerGroup();
+    const place = () => {
+      layer.clearLayers();
+      if (map.getZoom() < 13) return;
+      const view = map.getBounds();
+      for (const f of features) {
+        const c = L.geoJSON(f).getBounds().getCenter();
+        if (!view.contains(c)) continue;
+        const icon = L.divIcon({
+          className: "tract-label",
+          html: `<span>${f.properties.NAMELSAD}</span>`,
+          iconSize: [100, 14],
+        });
+        L.marker(c, { icon, interactive: false, keyboard: false }).addTo(layer);
+      }
     };
-  }, [map]);
-  if (!visible) return null;
-  return (
-    <>
-      {features.map((f) => {
-        const layer = L.geoJSON(f);
-        const c = layer.getBounds().getCenter();
-        return (
-          <div
-            key={f.properties.GEOID}
-            // Use Leaflet directly via a marker-less DivIcon would be heavier; instead leverage tooltip via dummy marker.
-            ref={(el) => {
-              if (!el) return;
-              if ((el as HTMLDivElement & { _placed?: boolean })._placed) return;
-              (el as HTMLDivElement & { _placed?: boolean })._placed = true;
-              const icon = L.divIcon({
-                className: "tract-label",
-                html: `<span>${f.properties.NAMELSAD}</span>`,
-                iconSize: [80, 14],
-              });
-              const m = L.marker(c, { icon, interactive: false }).addTo(map);
-              const cleanup = () => {
-                map.removeLayer(m);
-              };
-              // Remove on unmount via parent re-render
-              const obs = new MutationObserver(() => {
-                if (!document.body.contains(el)) {
-                  cleanup();
-                  obs.disconnect();
-                }
-              });
-              obs.observe(document.body, { childList: true, subtree: true });
-            }}
-            style={{ display: "none" }}
-          />
-        );
-      })}
-    </>
-  );
+    place();
+    layer.addTo(map);
+    map.on("zoomend moveend", place);
+    return () => {
+      map.off("zoomend moveend", place);
+      map.removeLayer(layer);
+    };
+  }, [map, features]);
+  return null;
 };
 
 export const SpotlightMap = ({ data, onSelect, selectedGeoid }: Props) => {
@@ -154,11 +134,7 @@ export const SpotlightMap = ({ data, onSelect, selectedGeoid }: Props) => {
           key={data.metric.id + ":" + data.city}
           data={data.geojson as GeoJSON.GeoJsonObject}
           ref={(r) => {
-            // react-leaflet typing for GeoJSON ref
-            const inst = (r as unknown as { leafletElement?: LGeoJSON } | LGeoJSON | null);
-            if (!inst) return;
-            // v4 returns the layer directly
-            layerRef.current = (inst as LGeoJSON).setStyle ? (inst as LGeoJSON) : (inst as { leafletElement: LGeoJSON }).leafletElement;
+            if (r) layerRef.current = r as unknown as LGeoJSON;
           }}
           style={(feature) => {
             const f = feature as GeoJSON.Feature<GeoJSON.Polygon, FeatureProps>;
