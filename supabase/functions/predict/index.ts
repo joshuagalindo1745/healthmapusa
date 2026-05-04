@@ -179,23 +179,31 @@ async function aiAnalysis(
     .join("\n");
 
   const prompt =
-    `Community-level health snapshot for ${county} County, ${state} (County Health Rankings).
+    `You are writing a warm, community-focused health report for residents of ${county} County, ${state}.
 
-Indicators:
+HEALTH INDICATORS (with national benchmarks):
 ${summary}
 
-Environment:
+FOOD & ECONOMIC ENVIRONMENT:
 ${envSummary}
 
-Above benchmark: ${high.length ? high.join(", ") : "none"}.
+ABOVE BENCHMARK: ${high.length ? high.join(", ") : "none"}.
 
-Write a TIGHT 2-paragraph analysis (max ~180 words total), plain text, no markdown.
+Write a 4–5 paragraph narrative report (400–500 words), plain text, no markdown, no headings, no bullet points. Follow this structure:
 
-Paragraph 1: Cite the specific numbers above to describe what stands out for this county. Use associational language ("is associated with", "tends to co-occur with") — never causal ("causes", "leads to"). These are county averages, not individual risks.
+PARAGRAPH 1 — Open by addressing residents directly: "Hello to my neighbors here in ${county}..." Narrate ALL FIVE metrics (Obesity, Diabetes, Physical Inactivity, Mental Distress, Food Insecurity) with their exact percentages woven naturally into the prose. Note which sit above vs below the national benchmark.
 
-Paragraph 2: Give 2–3 concrete, locally relevant actions residents or local leaders can take, each tied to a specific number above.
+PARAGRAPH 2 — Explain the environmental and economic reasons. Reference the actual numbers from the environment data above: fast food density, grocery density, food environment index, median income, poverty rate, SNAP participation. Tie them to the health indicators. You may also reference typical Medicare-population pressures in this state — ER visit rates, hospital admissions, and spending per beneficiary — to ground the report in real healthcare-system impact (frame as "state-level Medicare data suggests…" since these are statewide figures).
 
-No disclaimers, no preamble, no headings.`;
+PARAGRAPH 3 — Connect the metrics to each other in a cause-and-effect chain: how high fast food density and limited grocery access tend to drive diabetes, how diabetes co-occurs with mental distress, how mental distress compounds physical inactivity, and how these feed preventable hospital admissions.
+
+PARAGRAPH 4 — Give exactly 3 concrete, actionable recommendations specific to this county's WORST indicators (the ones above benchmark). Each recommendation must reference a specific number from the data above.
+
+PARAGRAPH 5 — End on a hopeful note. Highlight at least one indicator where the county is doing well (below benchmark), one strong environmental asset (e.g. high food environment index, decent median income, low poverty), and remind residents of community resilience.
+
+TONE: warm, plain English, community-focused — like a trusted local doctor or neighbor speaking. NOT clinical, NOT bureaucratic.
+LANGUAGE: use associational phrasing ("is associated with", "tends to co-occur with", "feeds into") — never strict causal claims about individuals. These are community averages.
+NO disclaimers, NO preamble, NO headings, NO markdown — just flowing prose paragraphs separated by blank lines.`;
 
   const res = await fetch(GROQ_URL, {
     method: "POST",
@@ -213,8 +221,8 @@ No disclaimers, no preamble, no headings.`;
         },
         { role: "user", content: prompt },
       ],
-      temperature: 0.5,
-      max_tokens: 350,
+      temperature: 0.7,
+      max_tokens: 1100,
     }),
   });
 
