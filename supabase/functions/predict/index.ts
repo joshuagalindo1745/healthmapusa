@@ -224,6 +224,7 @@ PARAGRAPH 5 — End on a hopeful note. Highlight at least one indicator where th
 
 TONE: warm, plain English, community-focused — like a trusted local doctor or neighbor speaking. NOT clinical, NOT bureaucratic.
 LANGUAGE: use associational phrasing ("is associated with", "tends to co-occur with", "feeds into") — never strict causal claims about individuals. These are community averages.
+NUMBER FORMATTING (CRITICAL): Always quote numbers exactly as formatted above — percentages with a % sign and one decimal (e.g. "26.2%"), money with a $ and commas (e.g. "$77,356"), densities as "0.88 per 1,000 residents", and the food environment index as "8.5 out of 10". NEVER output raw decimals like 0.8790062665939331 — round and add units.
 NO disclaimers, NO preamble, NO headings, NO markdown — just flowing prose paragraphs separated by blank lines.`;
 
   const res = await fetch(GROQ_URL, {
