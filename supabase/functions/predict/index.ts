@@ -174,8 +174,29 @@ async function aiAnalysis(
     )
     .join("\n");
 
+  // Format env values into human-friendly strings (percentages, currency, per-1k counts)
+  // so the AI never echoes raw decimals like 0.879006... back to the user.
+  const ENV_LABELS: Record<string, { label: string; fmt: (v: number) => string }> = {
+    food_insecurity_pct:    { label: "Food insecurity",            fmt: (v) => `${v.toFixed(1)}%` },
+    fast_food_density:      { label: "Fast food outlets per 1,000 residents", fmt: (v) => v.toFixed(2) },
+    grocery_density:        { label: "Grocery stores per 1,000 residents",    fmt: (v) => v.toFixed(2) },
+    food_environment_index: { label: "Food environment index (0–10, higher is better)", fmt: (v) => `${v.toFixed(1)} / 10` },
+    snap_participation:     { label: "SNAP participation",         fmt: (v) => `${v.toFixed(1)}%` },
+    median_income:          { label: "Median household income",    fmt: (v) => `$${Math.round(v).toLocaleString()}` },
+    poverty_rate:           { label: "Child poverty rate",         fmt: (v) => `${v.toFixed(1)}%` },
+    uninsured_pct:          { label: "Uninsured",                  fmt: (v) => `${v.toFixed(1)}%` },
+    rural_pct:              { label: "Rural population",           fmt: (v) => `${v.toFixed(1)}%` },
+    smoking_pct:            { label: "Adult smoking",              fmt: (v) => `${v.toFixed(1)}%` },
+    insufficient_sleep_pct: { label: "Insufficient sleep",         fmt: (v) => `${v.toFixed(1)}%` },
+  };
+
   const envSummary = Object.entries(env)
-    .map(([k, v]) => `- ${k}: ${v ?? "N/A"}`)
+    .map(([k, v]) => {
+      const meta = ENV_LABELS[k];
+      const label = meta?.label ?? k;
+      const value = v == null ? "N/A" : (meta ? meta.fmt(v) : String(v));
+      return `- ${label}: ${value}`;
+    })
     .join("\n");
 
   const prompt =
