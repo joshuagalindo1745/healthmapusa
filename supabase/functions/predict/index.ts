@@ -221,8 +221,8 @@ NO disclaimers, NO preamble, NO headings, NO markdown — just flowing prose par
         },
         { role: "user", content: prompt },
       ],
-      temperature: 0.5,
-      max_tokens: 350,
+      temperature: 0.7,
+      max_tokens: 1100,
     }),
   });
 
