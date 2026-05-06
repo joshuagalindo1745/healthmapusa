@@ -28,12 +28,16 @@ interface ConditionResult {
 // (multivariate OLS of each outcome against the relevant environment / SES
 // predictors, leaky predictors removed). F-test p-values are < 1e-300 → reported
 // as 0 and rendered as "< 0.001" in the UI.
+// Updated after the improved pipeline (5-fold CV, Yeo-Johnson target transform,
+// RandomizedSearchCV XGBoost + stacking cv=5, OOF bias calibration, deprivation
+// index interaction). p-values are F-test on the OOF predictions and are
+// effectively zero (< 1e-300) → rendered as "< 0.001" in the UI.
 const MODEL_STATS: Record<string, { r2: number; p_value: number; n: number }> = {
-  "Obesity":             { r2: 0.534, p_value: 0, n: 3100 },
-  "Diabetes":            { r2: 0.784, p_value: 0, n: 3100 },
-  "Physical Inactivity": { r2: 0.808, p_value: 0, n: 3100 },
-  "Mental Distress":     { r2: 0.719, p_value: 0, n: 3143 },
-  "Food Insecurity":     { r2: 0.770, p_value: 0, n: 3100 },
+  "Obesity":             { r2: 0.687, p_value: 0, n: 3100 },
+  "Diabetes":            { r2: 0.881, p_value: 0, n: 3100 },
+  "Physical Inactivity": { r2: 0.894, p_value: 0, n: 3100 },
+  "Mental Distress":     { r2: 0.823, p_value: 0, n: 3143 },
+  "Food Insecurity":     { r2: 0.852, p_value: 0, n: 3100 },
 };
 
 interface CountyRow {
