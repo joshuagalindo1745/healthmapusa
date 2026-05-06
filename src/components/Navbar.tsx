@@ -24,7 +24,15 @@ export const Navbar = () => {
           >
             City Spotlight
           </Link>
-          <a href="#about" onClick={scrollToFooter("about")} className="hover:text-foreground transition-base">About</a>
+          <Link
+            to="/about"
+            className={
+              "hover:text-foreground transition-base " +
+              (pathname === "/about" ? "text-primary" : "")
+            }
+          >
+            About
+          </Link>
           <a href="#sources" onClick={scrollToFooter("sources")} className="hover:text-foreground transition-base">Data Sources</a>
         </nav>
       </div>
