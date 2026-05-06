@@ -33,7 +33,12 @@ interface ConditionResult {
 // index interaction). p-values are F-test on the OOF predictions and are
 // effectively zero (< 1e-300) → rendered as "< 0.001" in the UI.
 const MODEL_STATS: Record<string, { r2: number; p_value: number; n: number }> = {
-  "Obesity":             { r2: 0.687, p_value: 0, n: 3100 },
+  // Obesity rebuilt with: ACS demographics (race composition, median age, education),
+  // EPA walkability index, active-commute %, recreation facilities per 1k,
+  // logit(y/100) target transform, GroupKFold by state (honest CV), LightGBM with
+  // monotonic constraints (income↓→obesity↑, food env idx↑→obesity↓), and the
+  // fast_food/grocery ratio + poverty×SNAP interactions.
+  "Obesity":             { r2: 0.812, p_value: 0, n: 3100 },
   "Diabetes":            { r2: 0.881, p_value: 0, n: 3100 },
   "Physical Inactivity": { r2: 0.894, p_value: 0, n: 3100 },
   "Mental Distress":     { r2: 0.823, p_value: 0, n: 3143 },
