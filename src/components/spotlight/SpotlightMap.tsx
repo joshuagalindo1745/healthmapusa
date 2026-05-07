@@ -167,8 +167,10 @@ export const SpotlightMap = ({ data, onSelect, selectedGeoid }: Props) => {
                 : v > data.metric.benchmark
                 ? `${(v - data.metric.benchmark).toFixed(1)} pp above benchmark`
                 : `${(data.metric.benchmark - v).toFixed(1)} pp below benchmark`;
+            const props = f.properties as FeatureProps & { neighborhood?: string | null };
+            const tipLabel = props.neighborhood || props.NAMELSAD;
             layer.bindTooltip(
-              `<div class="font-semibold text-xs">${f.properties.NAMELSAD}</div>
+              `<div class="font-semibold text-xs">${tipLabel}</div>
                <div class="text-[11px] text-muted-foreground">${data.metric.label}: ${v == null ? "—" : v.toFixed(1) + "%"}</div>
                <div class="text-[11px]">${cmp}</div>`,
               { sticky: true, className: "tract-tip" },
