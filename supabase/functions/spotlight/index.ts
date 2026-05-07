@@ -89,6 +89,101 @@ const METRICS: Record<string, { measureId: string; label: string; benchmark: num
   },
 };
 
+// ---------------- Neighborhood crosswalk (point-in-polygon by tract centroid) ----------------
+// Each city has an open-data GeoJSON of named neighborhoods. We cache them in module scope.
+const NHOOD_SOURCES: Record<CityKey, { url: string; nameProp: string }> = {
+  "san-francisco": {
+    url: "https://data.sfgov.org/resource/ajp5-b2md.geojson",
+    nameProp: "nhood",
+  },
+  "chicago": {
+    url: "https://data.cityofchicago.org/resource/igwz-8jzy.geojson",
+    nameProp: "community",
+  },
+  "new-york-city": {
+    url: "https://data.cityofnewyork.us/resource/9nt8-h7nd.geojson",
+    nameProp: "ntaname",
+  },
+};
+
+type Ring = number[][];
+type NhoodPoly = { name: string; rings: Ring[][]; bbox: [number, number, number, number] };
+const nhoodCache: Partial<Record<CityKey, NhoodPoly[]>> = {};
+
+function bboxOfRings(rings: Ring[][]): [number, number, number, number] {
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (const poly of rings) for (const ring of poly) for (const [x, y] of ring) {
+    if (x < minX) minX = x; if (y < minY) minY = y;
+    if (x > maxX) maxX = x; if (y > maxY) maxY = y;
+  }
+  return [minX, minY, maxX, maxY];
+}
+
+function pointInRing(x: number, y: number, ring: Ring): boolean {
+  let inside = false;
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+    const [xi, yi] = ring[i];
+    const [xj, yj] = ring[j];
+    const intersect = ((yi > y) !== (yj > y)) && (x < ((xj - xi) * (y - yi)) / (yj - yi + 1e-12) + xi);
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
+
+function pointInPolygon(x: number, y: number, polys: Ring[][]): boolean {
+  for (const poly of polys) {
+    if (poly.length === 0) continue;
+    if (!pointInRing(x, y, poly[0])) continue;
+    let inHole = false;
+    for (let h = 1; h < poly.length; h++) if (pointInRing(x, y, poly[h])) { inHole = true; break; }
+    if (!inHole) return true;
+  }
+  return false;
+}
+
+function centroidOfFeature(f: GeoJSON.Feature): [number, number] | null {
+  const g = f.geometry as GeoJSON.Polygon | GeoJSON.MultiPolygon | null;
+  if (!g) return null;
+  let sx = 0, sy = 0, n = 0;
+  const polys = g.type === "Polygon" ? [g.coordinates] : g.coordinates;
+  for (const poly of polys) {
+    const ring = poly[0];
+    for (const [x, y] of ring) { sx += x; sy += y; n++; }
+  }
+  return n ? [sx / n, sy / n] : null;
+}
+
+async function getNeighborhoods(cityKey: CityKey): Promise<NhoodPoly[]> {
+  if (nhoodCache[cityKey]) return nhoodCache[cityKey]!;
+  const src = NHOOD_SOURCES[cityKey];
+  const res = await fetch(src.url);
+  if (!res.ok) throw new Error(`Neighborhoods ${res.status}`);
+  const json = await res.json();
+  const out: NhoodPoly[] = [];
+  for (const f of json.features ?? []) {
+    const g = f.geometry;
+    if (!g) continue;
+    const rings: Ring[][] = g.type === "Polygon" ? [g.coordinates] : g.coordinates;
+    const name = f.properties?.[src.nameProp];
+    if (!name) continue;
+    const pretty = String(name).replace(/\b\w+/g, (w) =>
+      w.length <= 2 ? w.toUpperCase() : w[0].toUpperCase() + w.slice(1).toLowerCase()
+    );
+    out.push({ name: pretty, rings, bbox: bboxOfRings(rings) });
+  }
+  nhoodCache[cityKey] = out;
+  return out;
+}
+
+function nhoodForCentroid(lng: number, lat: number, nhoods: NhoodPoly[]): string | null {
+  for (const n of nhoods) {
+    const [minX, minY, maxX, maxY] = n.bbox;
+    if (lng < minX || lng > maxX || lat < minY || lat > maxY) continue;
+    if (pointInPolygon(lng, lat, n.rings)) return n.name;
+  }
+  return null;
+}
+
 async function fetchTracts(state: string, counties: string[]) {
   const where =
     counties.length === 1
