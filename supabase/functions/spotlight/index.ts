@@ -243,9 +243,10 @@ Deno.serve(async (req) => {
       });
     }
 
-    const [geo, values] = await Promise.all([
+    const [geo, values, nhoods] = await Promise.all([
       fetchTracts(city.state, city.counties),
       fetchPlaces(city.stateAbbr, city.countyNames, metric.measureId),
+      getNeighborhoods(cityParam).catch(() => [] as NhoodPoly[]),
     ]);
 
     let red = 0, green = 0, none = 0;
@@ -253,9 +254,16 @@ Deno.serve(async (req) => {
       const geoid = f.properties?.GEOID;
       const name = f.properties?.NAME;
       const v = geoid ? values[geoid] : undefined;
+      let nhoodName: string | null = null;
+      if (nhoods.length) {
+        const c = centroidOfFeature(f);
+        if (c) nhoodName = nhoodForCentroid(c[0], c[1], nhoods);
+      }
+      const tractLabel = name ? `Tract ${name}` : "Unknown tract";
       f.properties = {
         ...f.properties,
-        NAMELSAD: name ? `Census Tract ${name}` : "Unknown tract",
+        NAMELSAD: nhoodName ? `${nhoodName} · ${tractLabel}` : tractLabel,
+        neighborhood: nhoodName,
         value: v ?? null,
         flag: v == null ? "none" : v > metric.benchmark ? "above" : "below",
       };
