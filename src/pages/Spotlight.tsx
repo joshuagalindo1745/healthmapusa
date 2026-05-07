@@ -12,6 +12,7 @@ interface FeatureProps {
   GEOID: string;
   NAMELSAD: string;
   NAME: string;
+  neighborhood?: string | null;
   value: number | null;
   flag: "above" | "below" | "none";
 }
@@ -134,34 +135,6 @@ const Spotlight = () => {
         </section>
 
         <section className="max-w-3xl mx-auto px-4 md:px-8 pb-6 space-y-4">
-          {/* Quick city tabs for the three supported cities */}
-          <div className="inline-flex w-full sm:w-auto rounded-lg border border-border bg-card p-1 shadow-card">
-            {(["san-francisco", "chicago", "new-york-city"] as const).map((slug) => {
-              const c = CITIES.find((x) => x.slug === slug)!;
-              const active = city.slug === slug;
-              return (
-                <button
-                  key={slug}
-                  type="button"
-                  onClick={() => {
-                    setCity(c);
-                    setQuery(c.name);
-                    setUnsupportedMsg(null);
-                    load(slug, metric);
-                  }}
-                  className={
-                    "flex-1 sm:flex-none px-4 py-2 text-sm font-semibold rounded-md transition-base " +
-                    (active
-                      ? "bg-primary text-primary-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground hover:bg-secondary")
-                  }
-                >
-                  {c.name}
-                </button>
-              );
-            })}
-          </div>
-
           <div className="grid grid-cols-1 sm:grid-cols-[1fr_12rem_auto] gap-2 sm:gap-1.5 sm:rounded-lg sm:shadow-card sm:border sm:border-border sm:bg-card sm:p-1.5 sm:items-center">
             <div ref={inputRef} className="relative flex-1 min-w-0">
               <Input
@@ -278,7 +251,7 @@ const Spotlight = () => {
                       <X className="h-4 w-4" />
                     </button>
                   </div>
-                  <h3 className="text-lg font-bold mb-3">{selected.properties.NAMELSAD}</h3>
+                  <h3 className="text-lg font-bold mb-3">{selected.properties.neighborhood || selected.properties.NAMELSAD}</h3>
                   {(() => {
                     const v = selected.properties.value;
                     const b = data.metric.benchmark;

@@ -61,15 +61,28 @@ const TractLabels = ({
       layer.clearLayers();
       if (map.getZoom() < 13) return;
       const view = map.getBounds();
+      // Group tracts by neighborhood and place ONE label per neighborhood at the
+      // average centroid of its visible tracts. Falls back to NAMELSAD when no
+      // neighborhood is set.
+      const groups = new Map<string, { sx: number; sy: number; n: number }>();
       for (const f of features) {
+        const props = f.properties as FeatureProps & { neighborhood?: string | null };
+        const label = props.neighborhood || props.NAMELSAD;
+        if (!label) continue;
         const c = L.geoJSON(f).getBounds().getCenter();
         if (!view.contains(c)) continue;
+        const g = groups.get(label) ?? { sx: 0, sy: 0, n: 0 };
+        g.sx += c.lng; g.sy += c.lat; g.n += 1;
+        groups.set(label, g);
+      }
+      for (const [label, g] of groups) {
+        const center = L.latLng(g.sy / g.n, g.sx / g.n);
         const icon = L.divIcon({
           className: "tract-label",
-          html: `<span>${f.properties.NAMELSAD}</span>`,
-          iconSize: [100, 14],
+          html: `<span>${label}</span>`,
+          iconSize: [120, 16],
         });
-        L.marker(c, { icon, interactive: false, keyboard: false }).addTo(layer);
+        L.marker(center, { icon, interactive: false, keyboard: false }).addTo(layer);
       }
     };
     place();
@@ -154,8 +167,10 @@ export const SpotlightMap = ({ data, onSelect, selectedGeoid }: Props) => {
                 : v > data.metric.benchmark
                 ? `${(v - data.metric.benchmark).toFixed(1)} pp above benchmark`
                 : `${(data.metric.benchmark - v).toFixed(1)} pp below benchmark`;
+            const props = f.properties as FeatureProps & { neighborhood?: string | null };
+            const tipLabel = props.neighborhood || props.NAMELSAD;
             layer.bindTooltip(
-              `<div class="font-semibold text-xs">${f.properties.NAMELSAD}</div>
+              `<div class="font-semibold text-xs">${tipLabel}</div>
                <div class="text-[11px] text-muted-foreground">${data.metric.label}: ${v == null ? "—" : v.toFixed(1) + "%"}</div>
                <div class="text-[11px]">${cmp}</div>`,
               { sticky: true, className: "tract-tip" },
