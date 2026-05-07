@@ -259,7 +259,7 @@ Deno.serve(async (req) => {
         const c = centroidOfFeature(f);
         if (c) nhoodName = nhoodForCentroid(c[0], c[1], nhoods);
       }
-      const tractLabel = name ? `Tract ${name}` : "Unknown tract";
+      const tractLabel = name ? (String(name).startsWith("Census Tract") ? name : `Census Tract ${name}`) : "Unknown tract";
       f.properties = {
         ...f.properties,
         NAMELSAD: nhoodName ? `${nhoodName} · ${tractLabel}` : tractLabel,
