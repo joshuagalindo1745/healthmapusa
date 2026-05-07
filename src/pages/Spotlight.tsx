@@ -12,6 +12,7 @@ interface FeatureProps {
   GEOID: string;
   NAMELSAD: string;
   NAME: string;
+  neighborhood?: string | null;
   value: number | null;
   flag: "above" | "below" | "none";
 }
