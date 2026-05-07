@@ -251,7 +251,7 @@ const Spotlight = () => {
                       <X className="h-4 w-4" />
                     </button>
                   </div>
-                  <h3 className="text-lg font-bold mb-3">{selected.properties.NAMELSAD}</h3>
+                  <h3 className="text-lg font-bold mb-3">{selected.properties.neighborhood || selected.properties.NAMELSAD}</h3>
                   {(() => {
                     const v = selected.properties.value;
                     const b = data.metric.benchmark;
