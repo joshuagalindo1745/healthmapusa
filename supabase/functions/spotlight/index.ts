@@ -8,7 +8,7 @@ const corsHeaders = {
 };
 
 // Supported cities: name -> { state FIPS, list of county FIPS, state abbr, county names for PLACES, national benchmark }
-// Benchmarks come from CDC PLACES national crude prevalence (2023).
+// Benchmarks come from CDC PLACES national crude prevalence (2025 release, based on 2023 BRFSS).
 type CityKey = "san-francisco" | "chicago" | "new-york-city";
 interface CityCfg {
   label: string;
