@@ -84,6 +84,37 @@ const About = () => {
               ))}
             </div>
 
+            {/* Data Sources */}
+            <div className="rounded-xl border border-border bg-card p-6 shadow-card mt-10">
+              <p className="text-xs font-semibold tracking-[0.2em] text-primary mb-3">DATA SOURCES</p>
+              <h3 className="font-semibold text-lg mb-4">Where our numbers come from</h3>
+              <ul className="space-y-3 text-sm text-muted-foreground">
+                <li>
+                  <span className="font-medium text-foreground">CDC PLACES — 2025 release</span> (based on 2023 BRFSS).
+                  Tract- and county-level prevalence for obesity, diabetes, physical inactivity, mental distress, smoking, and hypertension.{" "}
+                  <a className="text-primary underline" href="https://www.cdc.gov/places/" target="_blank" rel="noreferrer">cdc.gov/places</a>
+                </li>
+                <li>
+                  <span className="font-medium text-foreground">USDA Food Environment Atlas — 2024 update.</span>{" "}
+                  Food insecurity, SNAP participation, grocery and fast-food density, food environment index.{" "}
+                  <a className="text-primary underline" href="https://www.ers.usda.gov/data-products/food-environment-atlas" target="_blank" rel="noreferrer">ers.usda.gov</a>
+                </li>
+                <li>
+                  <span className="font-medium text-foreground">U.S. Census ACS 5-Year (2019–2023)</span> & TIGER/Line 2024 boundaries.
+                  Demographics, income, education, and tract polygons.{" "}
+                  <a className="text-primary underline" href="https://www.census.gov/programs-surveys/acs" target="_blank" rel="noreferrer">census.gov/acs</a>
+                </li>
+                <li>
+                  <span className="font-medium text-foreground">EPA Smart Location Database (2021)</span> & County Health Rankings 2025.
+                  Walkability index, active commuting, and contextual indicators.
+                </li>
+              </ul>
+              <p className="text-xs text-muted-foreground/80 mt-4">
+                Last refreshed: May 2026. National benchmarks on each card are CDC PLACES 2025 crude prevalence.
+              </p>
+            </div>
+
+
             <div className="flex justify-center pt-8">
               <Button asChild size="lg" className="rounded-full gap-2">
                 <Link to="/">
