@@ -54,37 +54,37 @@ const METRICS: Record<string, { measureId: string; label: string; benchmark: num
   diabetes: {
     measureId: "DIABETES",
     label: "Diabetes",
-    benchmark: 11.6,
+    benchmark: 12.4,
     description: "Adults diagnosed with diabetes; reflects both health behaviors and access to care.",
   },
   obesity: {
     measureId: "OBESITY",
     label: "Obesity",
-    benchmark: 33.7,
+    benchmark: 34.0,
     description: "Adults with BMI ≥ 30. Strongly tied to food environment and physical activity.",
   },
   inactivity: {
     measureId: "LPA",
     label: "Physical Inactivity",
-    benchmark: 25.3,
+    benchmark: 26.1,
     description: "Adults reporting no leisure-time physical activity in the past month.",
   },
   mental: {
     measureId: "MHLTH",
     label: "Mental Distress",
-    benchmark: 14.5,
+    benchmark: 17.0,
     description: "Adults reporting 14+ poor mental health days in the past month.",
   },
   smoking: {
     measureId: "CSMOKING",
     label: "Smoking",
-    benchmark: 16.2,
+    benchmark: 13.7,
     description: "Adults who currently smoke cigarettes.",
   },
   hypertension: {
     measureId: "BPHIGH",
     label: "High Blood Pressure",
-    benchmark: 32.6,
+    benchmark: 34.9,
     description: "Adults diagnosed with high blood pressure.",
   },
 };
